@@ -62,7 +62,7 @@ def manage_fields(field_id=None):
 
         db.session.add(new_field)
         db.session.commit()
-        return jsonify({"message": "Field created successfully"}), 201
+        return jsonify({"message": "Field created successfully", "id": new_field.id}), 201
 
     elif request.method == 'GET':
         if field_id is not None:

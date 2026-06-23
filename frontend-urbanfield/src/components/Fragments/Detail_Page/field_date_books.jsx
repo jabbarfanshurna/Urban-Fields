@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import DateCard from "../../Elements/Card/DateCard";
 import TimeCard from "../../Elements/Card/TimeCard";
+import { getBookedSlots } from "../../../services/db/booking.service";
 
 const FieldDateBooks = ({ fieldId, price }) => {
     const formattedPrice = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(price);
@@ -26,6 +27,7 @@ const FieldDateBooks = ({ fieldId, price }) => {
     
     const [selectedDate, setSelectedDate] = useState(dates[0].fullDate);
     const [selectedTime, setSelectedTime] = useState("");
+    const [bookedSlots, setBookedSlots] = useState([]);
 
     const selectedMonth = selectedDate.getMonth();
     const selectedYear = selectedDate.getFullYear();
@@ -39,8 +41,25 @@ const FieldDateBooks = ({ fieldId, price }) => {
         return `${year}-${month}-${day}`;
     }
 
+    useEffect(() => {
+        if (!fieldId) return;
+        const dateStr = formatDate(selectedDate);
+        getBookedSlots(fieldId, dateStr).then((slots) => {
+            setBookedSlots(slots);
+            // Jika slot yang sebelumnya dipilih sekarang sudah penuh, batalkan pilihan
+            if (selectedTime && slots.includes(selectedTime.split('-')[0])) {
+                setSelectedTime("");
+            }
+        });
+    }, [fieldId, selectedDate]);
+
     const handleSubmit = (event) => {
         event.preventDefault();
+
+        if (!selectedTime) {
+            alert('Silakan pilih jadwal waktu terlebih dahulu.');
+            return;
+        }
 
         const queryString = new URLSearchParams({
             date: formatDate(selectedDate),  
@@ -86,6 +105,7 @@ const FieldDateBooks = ({ fieldId, price }) => {
                                 endTime={time.split('-')[1]}
                                 price={formattedPrice}
                                 isSelected={selectedTime === time}
+                                isBooked={bookedSlots.includes(time.split('-')[0])}
                                 onSelect={() => setSelectedTime(time)}
                             />
                         ))}

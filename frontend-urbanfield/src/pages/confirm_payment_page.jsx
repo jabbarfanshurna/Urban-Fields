@@ -43,7 +43,12 @@ const ConfirmPaymentPage = () => {
             })
             .catch(error => {
                 console.error('Error during booking:', error);
-                alert('Terjadi kesalahan saat melakukan pembayaran.');
+                if (error.response && error.response.status === 409) {
+                    alert(error.response.data.error || 'Slot waktu ini sudah dibooking, silakan pilih jadwal lain.');
+                    window.location.href = `/fields/${id}`;
+                } else {
+                    alert('Terjadi kesalahan saat melakukan pembayaran.');
+                }
             });
 
     };

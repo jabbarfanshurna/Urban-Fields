@@ -26,13 +26,15 @@ const DashboardFields = () => {
     };
 
     const handleFormSubmit = async (formData) => {
+        let result;
         if (selectedField) {
-            await updateField(selectedField.id, formData);
+            result = await updateField(selectedField.id, formData);
         } else {
-            await createField(formData);
+            result = await createField(formData);
         }
         const updatedFields = await getFields();
         setFields(updatedFields);
+        return result;
     };
 
     return (

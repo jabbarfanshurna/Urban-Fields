@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { jwtDecode } from 'jwt-decode';
-import { getMyBookings } from '../../../services/db/booking.service';
+import { getMyBookings, deleteBooking } from '../../../services/db/booking.service';
 
 const DashboardMyBookings = () => {
     const [bookings, setBookings] = useState([]);
+    const [userId, setUserId] = useState(null);
 
     useEffect(() => {
         const token = localStorage.getItem('token');
@@ -14,15 +15,31 @@ const DashboardMyBookings = () => {
 
         try {
             const decodedToken = jwtDecode(token);
-            const userId = decodedToken.sub;
-            getMyBookings(userId).then((data) => {
-                setBookings(data);
-            });
+            setUserId(decodedToken.sub);
+            loadBookings(decodedToken.sub);
         } catch (error) {
             console.error('Error decoding token:', error);
             window.location.href = '/login';
         }
     }, []);
+
+    const loadBookings = (uid) => {
+        getMyBookings(uid).then((data) => {
+            setBookings(data);
+        });
+    };
+
+    const handleCancel = async (bookingId) => {
+        const confirmed = window.confirm('Apakah Anda yakin ingin membatalkan reservasi ini?');
+        if (!confirmed) return;
+
+        try {
+            await deleteBooking(bookingId);
+            loadBookings(userId);
+        } catch (error) {
+            alert('Gagal membatalkan reservasi. Silakan coba lagi.');
+        }
+    };
 
     function formatDate(dateString) {
         const date = new Date(dateString);
@@ -50,6 +67,7 @@ const DashboardMyBookings = () => {
                                 <th className="text-left font-medium py-4">DATE</th>
                                 <th className="text-left font-medium py-4">TIME</th>
                                 <th className="text-left font-medium py-4">PAYMENT</th>
+                                <th className="text-left font-medium py-4">ACTION</th>
                             </tr>
                         </thead>
                         <tbody className="mt-4">
@@ -60,6 +78,14 @@ const DashboardMyBookings = () => {
                                     <td className="py-4">{formatDate(booking.date)}</td>
                                     <td className="py-4">{booking.time}</td>
                                     <td className="py-4">{booking.payment_method_name}</td>
+                                    <td className="py-4">
+                                        <button
+                                            onClick={() => handleCancel(booking.id)}
+                                            className="text-red-600 hover:underline"
+                                        >
+                                            Cancel
+                                        </button>
+                                    </td>
                                 </tr>
                             ))}
                         </tbody>

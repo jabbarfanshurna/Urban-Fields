@@ -107,11 +107,13 @@ const FieldModal = ({ showModal, toggleModal, field, onSubmit }) => {
 
         try {
             // onSubmit dari parent: createField (POST) jika field baru, updateField (PUT) jika edit
-            await onSubmit(formDataToSubmit);
+            const result = await onSubmit(formDataToSubmit);
 
-            // Simpan pilihan fasilitas untuk field ini (hanya bisa setelah field punya id, yaitu saat edit)
-            if (field && field.id) {
-                await updateFieldFacilities(field.id, formData.facilities);
+            // ID field: dari field yang sedang diedit, atau dari response create (field baru)
+            const targetFieldId = field?.id || result?.id;
+
+            if (targetFieldId) {
+                await updateFieldFacilities(targetFieldId, formData.facilities);
             }
 
             toggleModal();
@@ -209,11 +211,6 @@ const FieldModal = ({ showModal, toggleModal, field, onSubmit }) => {
                             </label>
                         ))}
                     </div>
-                    {!field && (
-                        <p className="text-xs text-gray-500 mb-4">
-                            Catatan: fasilitas bisa dipilih setelah lapangan dibuat (edit lapangan ini lagi).
-                        </p>
-                    )}
 
                     <div className="flex justify-between">
                         <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">

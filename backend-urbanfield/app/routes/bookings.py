@@ -7,11 +7,22 @@ import datetime
 def manage_bookings():
     if request.method == 'POST':
         data = request.json
+        booking_time = datetime.datetime.strptime(data['time'], '%H:%M').time()
+
+        # Cegah double-booking: tolak jika field+date+time yang sama sudah ada booking lain
+        existing_booking = Booking.query.filter_by(
+            field_id=data['field_id'],
+            date=data['date'],
+            time=booking_time
+        ).first()
+        if existing_booking:
+            return jsonify({"error": "Slot waktu ini sudah dibooking, silakan pilih jadwal lain"}), 409
+
         new_booking = Booking(
             user_id=data['user_id'],
             field_id=data['field_id'],
             date=data['date'],
-            time=datetime.datetime.strptime(data['time'], '%H:%M').time(),  # Parse time string to datetime.time
+            time=booking_time,
             payment_method_id=data['payment_method_id']
         )
         db.session.add(new_booking)
@@ -68,3 +79,13 @@ def manage_bookings():
             return jsonify({"message": "Booking deleted successfully"}), 200
         else:
             return jsonify({"error": "Booking not found"}), 404
+
+@app.route('/fields/<int:field_id>/booked_slots', methods=['GET'])
+def get_booked_slots(field_id):
+    date = request.args.get('date')
+    if not date:
+        return jsonify({"error": "Query parameter 'date' is required"}), 400
+
+    bookings = Booking.query.filter_by(field_id=field_id, date=date).all()
+    booked_times = [booking.time.strftime('%H:%M') for booking in bookings]
+    return jsonify(booked_times), 200

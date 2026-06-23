@@ -65,3 +65,10 @@ class Booking(db.Model):
     date = db.Column(db.Date, nullable=False)
     time = db.Column(db.Time, nullable=False)
     payment_method_id = db.Column(db.Integer, db.ForeignKey('payment_methods.id'), nullable=False)
+
+class Payment(db.Model):
+    __tablename__ = 'payments'
+    id = db.Column(db.Integer, primary_key=True)
+    booking_id = db.Column(db.Integer, db.ForeignKey('bookings.id'), nullable=False)
+    amount = db.Column(db.Numeric(10, 2), nullable=False)
+    payment_date = db.Column(db.DateTime, nullable=False)
