@@ -15,7 +15,7 @@ const NavBar = () => {
             <div className="flex items-center text-black text-lg font-Inter ml-52 font-bold">
                 {/* Sekarang sudah bisa diklik dan mengarah ke halaman yang benar */}
                 <Link to="/fields" className="mx-14 cursor-pointer hover:text-green-600 transition">Our Fields</Link>
-                <Link to="/dashboard/orders" className="mx-14 cursor-pointer hover:text-green-600 transition">Reservations</Link>
+                <Link to="/dashboard/my-bookings" className="mx-14 cursor-pointer hover:text-green-600 transition">Reservations</Link>
                 <Link to="/" className="mx-14 cursor-pointer hover:text-green-600 transition">About Us</Link>
             </div>
 

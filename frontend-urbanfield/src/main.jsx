@@ -12,6 +12,8 @@ import DashboardUser from './components/Fragments/Dashboard/dashboard_users';
 import DashboardFields from './components/Fragments/Dashboard/dashboard_fields';
 import DashboardOrder from './components/Fragments/Dashboard/dashboard_orders';
 import DashboardAdmins from './components/Fragments/Dashboard/dashboard_admins';
+import DashboardFacilities from './components/Fragments/Dashboard/dashboard_facilities';
+import DashboardMyBookings from './components/Fragments/Dashboard/dashboard_my_bookings';
 import LoginPage from './pages/login_page';
 import RegisterPage from './pages/register_page';
 import ConfirmPaymentPage from './pages/confirm_payment_page';
@@ -68,6 +70,14 @@ const router = createBrowserRouter([
       {
         path: 'admins',
         element: <DashboardAdmins />,
+      },
+      {
+        path: 'facilities',
+        element: <DashboardFacilities />,
+      },
+      {
+        path: 'my-bookings',
+        element: <DashboardMyBookings />,
       },
     ],
   },

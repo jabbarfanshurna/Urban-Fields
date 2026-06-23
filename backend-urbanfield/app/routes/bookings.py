@@ -19,7 +19,11 @@ def manage_bookings():
         return jsonify({"message": "Booking created successfully"}), 201
     
     elif request.method == 'GET':
-        bookings = Booking.query.all()
+        user_id = request.args.get('user_id')
+        if user_id:
+            bookings = Booking.query.filter_by(user_id=user_id).all()
+        else:
+            bookings = Booking.query.all()
         bookings_list = []
         for booking in bookings:
             user = User.query.get(booking.user_id)

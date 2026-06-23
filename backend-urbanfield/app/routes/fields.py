@@ -161,18 +161,34 @@ def manage_fields(field_id=None):
         else:
             return jsonify({"error": "Field not found"}), 404
 
-@app.route('/fields/<int:field_id>/facilities', methods=['GET'])
-def get_field_facilities(field_id):
+@app.route('/fields/<int:field_id>/facilities', methods=['GET', 'PUT'])
+def manage_field_facilities_for_field(field_id):
     field = Field.query.get(field_id)
     if not field:
         return jsonify({"error": "Field not found"}), 404
-    
-    facilities = Facility.query.join(FieldFacility, Facility.id == FieldFacility.facility_id)\
-        .filter(FieldFacility.field_id == field_id)\
-        .all()
-    
-    facilities_list = [{"id": facility.id, "name": facility.name, "icon": facility.icon} for facility in facilities]
-    return jsonify(facilities_list), 200
+
+    if request.method == 'GET':
+        facilities = Facility.query.join(FieldFacility, Facility.id == FieldFacility.facility_id)\
+            .filter(FieldFacility.field_id == field_id)\
+            .all()
+
+        facilities_list = [{"id": facility.id, "name": facility.name, "icon": facility.icon} for facility in facilities]
+        return jsonify(facilities_list), 200
+
+    elif request.method == 'PUT':
+        data = request.json
+        facility_ids = data.get('facility_ids', [])
+
+        # Replace all existing associations for this field with the new selection
+        FieldFacility.query.filter_by(field_id=field_id).delete()
+
+        for facility_id in facility_ids:
+            facility = Facility.query.get(facility_id)
+            if facility:
+                db.session.add(FieldFacility(field_id=field_id, facility_id=facility_id))
+
+        db.session.commit()
+        return jsonify({"message": "Field facilities updated successfully"}), 200
 
 @app.route('/fields/<int:field_id>/reviews', methods=['GET'])
 def get_field_reviews(field_id):

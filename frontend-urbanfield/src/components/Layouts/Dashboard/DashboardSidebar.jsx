@@ -31,8 +31,18 @@ const DashboardSidebar = ({ username, role }) => {
                   <img src="/img/dashboard_item/order.png" className="w-6 inline-block mr-2" /> Order
                 </li>
               </Link>
+              <Link to="/dashboard/facilities">
+                <li className={`px-2.5 rounded-lg py-4 my-2 cursor-pointer items-center ${currentPath === '/dashboard/facilities' ? 'bg-blue-700' : 'hover:bg-gray-700'}`}>
+                  <img src="/img/dashboard_item/field.png" className="w-6 inline-block mr-2" /> Facility
+                </li>
+              </Link>
             </>
           )}
+          <Link to="/dashboard/my-bookings">
+            <li className={`px-2.5 rounded-lg py-4 my-2 cursor-pointer items-center ${currentPath === '/dashboard/my-bookings' ? 'bg-blue-700' : 'hover:bg-gray-700'}`}>
+              <img src="/img/dashboard_item/order.png" className="w-6 inline-block mr-2" /> My Bookings
+            </li>
+          </Link>
           <Link to="/dashboard/admins">
             <li className={`px-2.5 rounded-lg py-4 my-2 cursor-pointer items-center ${currentPath === '/dashboard/admins' ? 'bg-blue-700' : 'hover:bg-gray-700'}`}>
               <img src="/img/dashboard_item/admin.png" className="w-6 inline-block mr-2" /> Admin

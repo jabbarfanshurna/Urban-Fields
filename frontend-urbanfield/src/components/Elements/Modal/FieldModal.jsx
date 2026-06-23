@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { getFacilities } from '../../../services/db/facility.service';
+import { getFieldFacilities, updateFieldFacilities } from '../../../services/db/field.service';
 
 const FieldModal = ({ showModal, toggleModal, field, onSubmit }) => {
+    const [allFacilities, setAllFacilities] = useState([]);
     const [formData, setFormData] = useState({
         nama: '',
         tipe: '1',
@@ -22,8 +25,22 @@ const FieldModal = ({ showModal, toggleModal, field, onSubmit }) => {
     });
 
     useEffect(() => {
+        getFacilities().then((data) => {
+            setAllFacilities(data);
+        });
+    }, []);
+
+    useEffect(() => {
         if (field) {
-            setFormData({
+            getFieldFacilities(field.id).then((selectedFacilities) => {
+                setFormData((prev) => ({
+                    ...prev,
+                    facilities: selectedFacilities.map((f) => String(f.id)),
+                }));
+            });
+
+            setFormData((prev) => ({
+                ...prev,
                 nama: field.name || '',
                 tipe: field.type || '1',
                 city: field.city || '',
@@ -35,8 +52,7 @@ const FieldModal = ({ showModal, toggleModal, field, onSubmit }) => {
                 image1: null,
                 image2: null,
                 image3: null,
-                facilities: field.facilities || [],
-            });
+            }));
             setImagePreviews({
                 image1: field.image_url ? `http://127.0.0.1:5000/${field.image_url}` : null,
                 image2: field.image_url2 ? `http://127.0.0.1:5000/${field.image_url2}` : null,
@@ -85,26 +101,19 @@ const FieldModal = ({ showModal, toggleModal, field, onSubmit }) => {
         formDataToSubmit.append('price_per_hour', formData.price);
         formDataToSubmit.append('opening_time', formData.opening);
         formDataToSubmit.append('closing_time', formData.closing);
-        formDataToSubmit.append('image_url', formData.image1);
-        formDataToSubmit.append('image_url2', formData.image2);
-        formDataToSubmit.append('image_url3', formData.image3);
-        formDataToSubmit.append('facilities', JSON.stringify(formData.facilities));
+        if (formData.image1) formDataToSubmit.append('image_url', formData.image1);
+        if (formData.image2) formDataToSubmit.append('image_url2', formData.image2);
+        if (formData.image3) formDataToSubmit.append('image_url3', formData.image3);
 
         try {
-            const response = await fetch('http://127.0.0.1:5000/fields', {
-                method: 'POST',
-                body: formDataToSubmit,
-            });
-        
+            // onSubmit dari parent: createField (POST) jika field baru, updateField (PUT) jika edit
+            await onSubmit(formDataToSubmit);
 
-            if (!response.ok) {
-                throw new Error('Failed to save field data');
+            // Simpan pilihan fasilitas untuk field ini (hanya bisa setelah field punya id, yaitu saat edit)
+            if (field && field.id) {
+                await updateFieldFacilities(field.id, formData.facilities);
             }
 
-            const result = await response.json();
-            console.log('Field saved successfully:', result);
-
-            // Close the modal
             toggleModal();
         } catch (error) {
             console.error('Error saving field:', error);
@@ -185,12 +194,31 @@ const FieldModal = ({ showModal, toggleModal, field, onSubmit }) => {
                     <input type="file" id="image3" name="image3" onChange={handleFileChange} className="block w-full p-2 border border-gray-300 rounded mt-1 mb-4" />
                     {imagePreviews.image3 && <img src={imagePreviews.image3} alt="Preview" className="mt-2 w-full" />}
 
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Fasilitas:</label>
+                    <div className="mb-4 grid grid-cols-2 gap-1">
+                        {allFacilities.map((facility) => (
+                            <label key={facility.id} className="flex items-center text-sm">
+                                <input
+                                    type="checkbox"
+                                    value={facility.id}
+                                    checked={formData.facilities.includes(String(facility.id))}
+                                    onChange={handleCheckboxChange}
+                                    className="mr-2"
+                                />
+                                {facility.name}
+                            </label>
+                        ))}
+                    </div>
+                    {!field && (
+                        <p className="text-xs text-gray-500 mb-4">
+                            Catatan: fasilitas bisa dipilih setelah lapangan dibuat (edit lapangan ini lagi).
+                        </p>
+                    )}
+
                     <div className="flex justify-between">
-                        {!field && (
-                            <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                                Save
-                            </button>
-                        )}
+                        <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                            Save
+                        </button>
 
                         {field && (
                             <button type="button" onClick={handleDelete} className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
