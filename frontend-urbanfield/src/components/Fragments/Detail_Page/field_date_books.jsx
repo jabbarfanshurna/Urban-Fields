@@ -71,7 +71,7 @@ const FieldDateBooks = ({ fieldId, price }) => {
     };
 
     return (
-        <div className="mt-20 mx-28">
+        <div id="jadwal-section" className="mt-20 mx-28">
             <div className="w-fit">
                 <div className="flex items-center">
                     <img src="/img/dateIcon.png" alt="date" className="w-14"/>

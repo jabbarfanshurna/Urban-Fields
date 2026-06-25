@@ -2,6 +2,13 @@ const FieldDescDetail = (props) => {
     const { name, city, address, street_address, price } = props;
     const formattedPrice = (price !== undefined && Number(price).toLocaleString('id-ID', { style: 'currency', currency: 'IDR' })) || '-';
 
+    const handleCheckAvailability = () => {
+        const target = document.getElementById('jadwal-section');
+        if (target) {
+            target.scrollIntoView({ behavior: 'smooth' });
+        }
+    };
+
     return (
         <div className="mt-10 mx-28 flex w-full justify-between">
             <div className="w-3/5">
@@ -19,7 +26,7 @@ const FieldDescDetail = (props) => {
             <div className="w-2/5 mt-12">
                 <h2 className="text-xl font-Poppins text-slate-600 font-semibold">Mulai Dari</h2>
                 <p className="text-3xl font-Poppins font-semibold">{formattedPrice} <span className="text-xl text-slate-800 font-normal">Per Sesi</span></p>
-                <button className="w-fit px-32 h-14 bg-sky-900 text-white text-xl mt-6 font-semibold font-Poppins rounded-2xl">Cek Ketersediaan</button>
+                <button onClick={handleCheckAvailability} className="w-fit px-32 h-14 bg-sky-900 text-white text-xl mt-6 font-semibold font-Poppins rounded-2xl">Cek Ketersediaan</button>
             </div>
         </div>
     )

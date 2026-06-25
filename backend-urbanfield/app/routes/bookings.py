@@ -74,6 +74,8 @@ def manage_bookings():
         booking_id = data.get('id')
         booking = Booking.query.get(booking_id)
         if booking:
+            if booking.date < datetime.date.today():
+                return jsonify({"error": "Booking yang sudah lewat tidak bisa dibatalkan"}), 400
             db.session.delete(booking)
             db.session.commit()
             return jsonify({"message": "Booking deleted successfully"}), 200

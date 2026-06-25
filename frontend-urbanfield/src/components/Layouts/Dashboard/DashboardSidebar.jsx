@@ -12,7 +12,9 @@ const DashboardSidebar = ({ username, role }) => {
   return (
     <div className="w-full h-screen bg-[#191919] text-white px-6 pt-12 pb-4 select-none flex flex-col">
       <div>
-        <h1 className="text-white text-2xl font-KronaOne ml-4">URBAN FIELDS</h1>
+        <Link to="/">
+          <h1 className="text-white text-2xl font-KronaOne ml-4 cursor-pointer">URBAN FIELDS</h1>
+        </Link>
         <ul className="mt-10 font-Inter text-lg">
           {role === 'admin' && (
             <>

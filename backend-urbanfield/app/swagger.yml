@@ -1,0 +1,528 @@
+swagger: "2.0"
+info:
+  title: Urban Fields API
+  description: API dokumentasi untuk aplikasi booking lapangan olahraga Urban Fields
+  version: "1.0.0"
+basePath: /
+schemes:
+  - http
+
+paths:
+  /login:
+    post:
+      tags: [Auth]
+      summary: Login user dan mendapatkan JWT access token
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: object
+            properties:
+              email: { type: string }
+              password: { type: string }
+      responses:
+        200: { description: Login berhasil, token dikembalikan }
+        401: { description: Email atau password salah }
+
+  /profile:
+    get:
+      tags: [Auth]
+      summary: Ambil data profil user yang sedang login (butuh JWT)
+      security: [{ Bearer: [] }]
+      responses:
+        200: { description: Data profil user }
+        404: { description: User tidak ditemukan }
+
+  /users:
+    post:
+      tags: [Users]
+      summary: Buat user baru (register)
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: object
+            properties:
+              username: { type: string }
+              password: { type: string }
+              email: { type: string }
+              phone_number: { type: string }
+              role: { type: string, enum: [admin, customer] }
+      responses:
+        201: { description: User berhasil dibuat }
+    get:
+      tags: [Users]
+      summary: Ambil semua user
+      responses:
+        200: { description: List semua user }
+
+  /users/{user_id}:
+    get:
+      tags: [Users]
+      summary: Ambil detail satu user
+      parameters:
+        - in: path
+          name: user_id
+          required: true
+          type: integer
+      responses:
+        200: { description: Detail user }
+        404: { description: User tidak ditemukan }
+    put:
+      tags: [Users]
+      summary: Update data user
+      parameters:
+        - in: path
+          name: user_id
+          required: true
+          type: integer
+        - in: body
+          name: body
+          schema:
+            type: object
+            properties:
+              username: { type: string }
+              password: { type: string }
+              email: { type: string }
+              phone_number: { type: string }
+              role: { type: string }
+      responses:
+        200: { description: User berhasil diupdate }
+        404: { description: User tidak ditemukan }
+    delete:
+      tags: [Users]
+      summary: Hapus user
+      parameters:
+        - in: path
+          name: user_id
+          required: true
+          type: integer
+      responses:
+        200: { description: User berhasil dihapus }
+        404: { description: User tidak ditemukan }
+
+  /fields:
+    post:
+      tags: [Fields]
+      summary: Buat lapangan baru (multipart/form-data, bisa sertakan gambar)
+      consumes: [multipart/form-data]
+      parameters:
+        - in: formData
+          name: name
+          type: string
+          required: true
+        - in: formData
+          name: type_id
+          type: integer
+          required: true
+        - in: formData
+          name: city
+          type: string
+          required: true
+        - in: formData
+          name: address
+          type: string
+          required: true
+        - in: formData
+          name: street_address
+          type: string
+        - in: formData
+          name: price_per_hour
+          type: number
+          required: true
+        - in: formData
+          name: opening_time
+          type: string
+        - in: formData
+          name: closing_time
+          type: string
+        - in: formData
+          name: image_url
+          type: file
+        - in: formData
+          name: image_url2
+          type: file
+        - in: formData
+          name: image_url3
+          type: file
+      responses:
+        201: { description: "Lapangan berhasil dibuat, response berisi id lapangan baru" }
+    get:
+      tags: [Fields]
+      summary: Ambil semua lapangan
+      responses:
+        200: { description: List semua lapangan }
+
+  /fields/{field_id}:
+    get:
+      tags: [Fields]
+      summary: Ambil detail satu lapangan
+      parameters:
+        - in: path
+          name: field_id
+          required: true
+          type: integer
+      responses:
+        200: { description: Detail lapangan }
+        404: { description: Lapangan tidak ditemukan }
+    put:
+      tags: [Fields]
+      summary: Update data lapangan (multipart/form-data)
+      consumes: [multipart/form-data]
+      parameters:
+        - in: path
+          name: field_id
+          required: true
+          type: integer
+      responses:
+        200: { description: Lapangan berhasil diupdate }
+        404: { description: Lapangan tidak ditemukan }
+    delete:
+      tags: [Fields]
+      summary: Hapus lapangan
+      parameters:
+        - in: path
+          name: field_id
+          required: true
+          type: integer
+      responses:
+        200: { description: Lapangan berhasil dihapus }
+        404: { description: Lapangan tidak ditemukan }
+
+  /fields/{field_id}/facilities:
+    get:
+      tags: [Fields]
+      summary: Ambil daftar fasilitas yang dimiliki sebuah lapangan
+      parameters:
+        - in: path
+          name: field_id
+          required: true
+          type: integer
+      responses:
+        200: { description: List fasilitas milik lapangan ini }
+        404: { description: Lapangan tidak ditemukan }
+    put:
+      tags: [Fields]
+      summary: Set/replace seluruh fasilitas milik sebuah lapangan
+      parameters:
+        - in: path
+          name: field_id
+          required: true
+          type: integer
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: object
+            properties:
+              facility_ids:
+                type: array
+                items: { type: integer }
+      responses:
+        200: { description: Fasilitas lapangan berhasil diupdate }
+        404: { description: Lapangan tidak ditemukan }
+
+  /fields/{field_id}/reviews:
+    get:
+      tags: [Fields]
+      summary: Ambil semua review untuk sebuah lapangan
+      parameters:
+        - in: path
+          name: field_id
+          required: true
+          type: integer
+      responses:
+        200: { description: List review lapangan ini }
+
+  /fields/{field_id}/booked_slots:
+    get:
+      tags: [Bookings]
+      summary: Ambil daftar slot waktu yang sudah dibooking pada tanggal tertentu
+      parameters:
+        - in: path
+          name: field_id
+          required: true
+          type: integer
+        - in: query
+          name: date
+          required: true
+          type: string
+          description: "Format: YYYY-MM-DD"
+      responses:
+        200: { description: "List jam yang sudah terbooking, contoh: [\"10:00\", \"14:00\"]" }
+        400: { description: Parameter date tidak diisi }
+
+  /facilities:
+    post:
+      tags: [Facilities]
+      summary: Buat fasilitas baru (master data)
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: object
+            properties:
+              name: { type: string }
+              icon: { type: string }
+      responses:
+        201: { description: Fasilitas berhasil dibuat }
+    get:
+      tags: [Facilities]
+      summary: Ambil semua fasilitas
+      responses:
+        200: { description: List semua fasilitas }
+    put:
+      tags: [Facilities]
+      summary: Update fasilitas
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: object
+            properties:
+              id: { type: integer }
+              name: { type: string }
+              icon: { type: string }
+      responses:
+        200: { description: Fasilitas berhasil diupdate }
+        404: { description: Fasilitas tidak ditemukan }
+    delete:
+      tags: [Facilities]
+      summary: Hapus fasilitas
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: object
+            properties:
+              id: { type: integer }
+      responses:
+        200: { description: Fasilitas berhasil dihapus }
+        404: { description: Fasilitas tidak ditemukan }
+
+  /field_facilities:
+    post:
+      tags: [Facilities]
+      summary: Hubungkan satu fasilitas ke satu lapangan
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: object
+            properties:
+              field_id: { type: integer }
+              facility_id: { type: integer }
+      responses:
+        201: { description: Relasi berhasil dibuat }
+        400: { description: Relasi sudah ada sebelumnya }
+        404: { description: Lapangan atau fasilitas tidak ditemukan }
+    get:
+      tags: [Facilities]
+      summary: Ambil semua relasi lapangan-fasilitas
+      responses:
+        200: { description: List semua relasi field_facility }
+
+  /field_types:
+    post:
+      tags: [Field Types]
+      summary: Buat tipe lapangan baru (misal Futsal, Badminton)
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: object
+            properties:
+              name: { type: string }
+      responses:
+        201: { description: Tipe lapangan berhasil dibuat }
+    get:
+      tags: [Field Types]
+      summary: Ambil semua tipe lapangan
+      responses:
+        200: { description: List semua tipe lapangan }
+    put:
+      tags: [Field Types]
+      summary: Update tipe lapangan
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: object
+            properties:
+              id: { type: integer }
+              name: { type: string }
+      responses:
+        200: { description: Tipe lapangan berhasil diupdate }
+        404: { description: Tipe lapangan tidak ditemukan }
+    delete:
+      tags: [Field Types]
+      summary: Hapus tipe lapangan
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: object
+            properties:
+              id: { type: integer }
+      responses:
+        200: { description: Tipe lapangan berhasil dihapus }
+        404: { description: Tipe lapangan tidak ditemukan }
+
+  /field_reviews:
+    post:
+      tags: [Reviews]
+      summary: Submit review/rating untuk sebuah lapangan
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: object
+            properties:
+              field_id: { type: integer }
+              user_id: { type: integer }
+              rating: { type: integer, minimum: 1, maximum: 10 }
+              review: { type: string }
+      responses:
+        201: { description: Review berhasil dibuat }
+        404: { description: Lapangan atau user tidak ditemukan }
+    get:
+      tags: [Reviews]
+      summary: Ambil semua review (semua lapangan)
+      responses:
+        200: { description: List semua review }
+
+  /bookings:
+    post:
+      tags: [Bookings]
+      summary: Buat booking baru
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: object
+            properties:
+              user_id: { type: integer }
+              field_id: { type: integer }
+              date: { type: string, description: "Format YYYY-MM-DD" }
+              time: { type: string, description: "Format HH:MM" }
+              payment_method_id: { type: integer }
+      responses:
+        201: { description: Booking berhasil dibuat }
+        409: { description: Slot waktu sudah dibooking orang lain }
+    get:
+      tags: [Bookings]
+      summary: Ambil booking (semua, atau filter by user_id)
+      parameters:
+        - in: query
+          name: user_id
+          type: integer
+          required: false
+          description: Jika diisi, hanya kembalikan booking milik user ini
+      responses:
+        200: { description: List booking }
+    put:
+      tags: [Bookings]
+      summary: Update booking
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: object
+            properties:
+              id: { type: integer }
+              user_id: { type: integer }
+              field_id: { type: integer }
+              date: { type: string }
+              time: { type: string }
+              payment_method_id: { type: integer }
+      responses:
+        200: { description: Booking berhasil diupdate }
+        404: { description: Booking tidak ditemukan }
+    delete:
+      tags: [Bookings]
+      summary: Batalkan/hapus booking (tidak bisa untuk booking yang tanggalnya sudah lewat)
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: object
+            properties:
+              id: { type: integer }
+      responses:
+        200: { description: Booking berhasil dibatalkan }
+        400: { description: Booking sudah lewat tanggalnya, tidak bisa dibatalkan }
+        404: { description: Booking tidak ditemukan }
+
+  /payments:
+    post:
+      tags: [Payments]
+      summary: Buat record pembayaran
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: object
+            properties:
+              booking_id: { type: integer }
+              amount: { type: number }
+              payment_date: { type: string }
+      responses:
+        201: { description: Payment berhasil dibuat }
+    get:
+      tags: [Payments]
+      summary: Ambil semua record pembayaran
+      responses:
+        200: { description: List semua payment }
+    put:
+      tags: [Payments]
+      summary: Update record pembayaran
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: object
+            properties:
+              id: { type: integer }
+              booking_id: { type: integer }
+              amount: { type: number }
+              payment_date: { type: string }
+      responses:
+        200: { description: Payment berhasil diupdate }
+        404: { description: Payment tidak ditemukan }
+    delete:
+      tags: [Payments]
+      summary: Hapus record pembayaran
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: object
+            properties:
+              id: { type: integer }
+      responses:
+        200: { description: Payment berhasil dihapus }
+        404: { description: Payment tidak ditemukan }
+
+securityDefinitions:
+  Bearer:
+    type: apiKey
+    name: Authorization
+    in: header
+    description: "Masukkan token JWT dengan format: Bearer {token}"
+

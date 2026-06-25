@@ -37,7 +37,8 @@ const DashboardMyBookings = () => {
             await deleteBooking(bookingId);
             loadBookings(userId);
         } catch (error) {
-            alert('Gagal membatalkan reservasi. Silakan coba lagi.');
+            const message = error.response?.data?.error || 'Gagal membatalkan reservasi. Silakan coba lagi.';
+            alert(message);
         }
     };
 
@@ -48,6 +49,16 @@ const DashboardMyBookings = () => {
         const day = String(date.getDate()).padStart(2, '0');
 
         return `${year}-${month}-${day}`;
+    }
+
+    function isPastBooking(dateString) {
+        const bookingDate = new Date(dateString);
+        bookingDate.setHours(0, 0, 0, 0);
+
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        return bookingDate < today;
     }
 
     return (
@@ -79,12 +90,16 @@ const DashboardMyBookings = () => {
                                     <td className="py-4">{booking.time}</td>
                                     <td className="py-4">{booking.payment_method_name}</td>
                                     <td className="py-4">
-                                        <button
-                                            onClick={() => handleCancel(booking.id)}
-                                            className="text-red-600 hover:underline"
-                                        >
-                                            Cancel
-                                        </button>
+                                        {isPastBooking(booking.date) ? (
+                                            <span className="text-gray-400">Selesai</span>
+                                        ) : (
+                                            <button
+                                                onClick={() => handleCancel(booking.id)}
+                                                className="text-red-600 hover:underline"
+                                            >
+                                                Cancel
+                                            </button>
+                                        )}
                                     </td>
                                 </tr>
                             ))}

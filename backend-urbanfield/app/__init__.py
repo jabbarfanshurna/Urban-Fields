@@ -2,6 +2,8 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_jwt_extended import JWTManager
 from flask_cors import CORS
+from flasgger import Swagger
+import os
 
 app = Flask(__name__)
 
@@ -15,6 +17,15 @@ app.config['JWT_SECRET_KEY'] = 'ewakofields_rahasia_123' # Kunci JWT dipindah ke
 
 db = SQLAlchemy(app)
 jwt = JWTManager(app)
+
+# Swagger UI - dokumentasi API bisa diakses di /apidocs
+app.config['SWAGGER'] = {
+    'title': 'Urban Fields API',
+    'uiversion': 3,
+    'specs_route': '/apidocs/',
+}
+swagger_yml_path = os.path.join(os.path.dirname(__file__), 'swagger.yml')
+swagger = Swagger(app, template_file=swagger_yml_path)
 
 # Import routes (pastikan di bawah inisialisasi app, db, jwt)
 from app.routes import bookings, facilities, field_facility, field_review, field_types, fields, payments, users
