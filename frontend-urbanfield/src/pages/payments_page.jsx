@@ -2,7 +2,7 @@ import React, { Fragment, useEffect, useState } from 'react';
 import { useLocation, useParams, useNavigate } from 'react-router-dom';
 import PaymentNavbar from '../components/Layouts/PaymentNavbar';
 import TitleSections from '../components/Fragments/title_sections';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import ContactSections from '../components/Fragments/contact_sections';
 import LandingPageButton from '../components/Elements/Button/LandingPageButton';
 import PaymentFieldDetail from '../components/Fragments/Payment_Page/payment_field_detail';

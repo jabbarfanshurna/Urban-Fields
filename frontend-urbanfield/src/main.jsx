@@ -18,6 +18,7 @@ import LoginPage from './pages/login_page';
 import RegisterPage from './pages/register_page';
 import ConfirmPaymentPage from './pages/confirm_payment_page';
 import axios from 'axios';
+import { HelmetProvider } from 'react-helmet-async';
 
 // Configure global Axios Request Interceptor
 axios.interceptors.request.use(
@@ -101,6 +102,8 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <RouterProvider router={router} />
+    <HelmetProvider>
+      <RouterProvider router={router} />
+    </HelmetProvider>
   </React.StrictMode>,
 );

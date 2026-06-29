@@ -1,6 +1,6 @@
 import { Fragment, useEffect, useState } from "react";
 import NavBar from "../components/Layouts/NavBar";
-import { Helmet } from "react-helmet";
+import { Helmet } from "react-helmet-async";
 import TitleSections from "../components/Fragments/title_sections";
 import ContactSections from "../components/Fragments/contact_sections";
 import FieldsImageDetails from "../components/Fragments/Detail_Page/field_image_details";

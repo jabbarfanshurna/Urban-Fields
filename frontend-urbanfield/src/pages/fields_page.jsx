@@ -3,7 +3,7 @@ import NavBar from "../components/Layouts/NavBar";
 import FieldsInput from "../components/Elements/Input/FieldsInput";
 import FieldCard from "../components/Elements/Card/FieldCard";
 import LandingPageAbout from "../components/Fragments/Landing_Page/landing_page_about";
-import { Helmet } from "react-helmet";
+import { Helmet } from "react-helmet-async";
 import TitleSections from "../components/Fragments/title_sections";
 import { getFields } from "../services/db/field.service";
 
