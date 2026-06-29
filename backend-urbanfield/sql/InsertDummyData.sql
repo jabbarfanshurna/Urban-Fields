@@ -2,32 +2,32 @@ USE urban_fields;
 
 -- Insert dummy data for users
 INSERT INTO users (username, password, user_document, role, email, phone_number) VALUES
-    ('admin_user', 'admin_password', NULL, 'admin', 'admin1@example.com', '+1234567890'),
-    ('admin_user2','admin_pasword', NULL, 'admin', 'admin2@example.com', '+6282345653879'),
-    ('admin_user3', 'admin_password', NULL, 'admin', 'admin3@example.com', '+6285551234567'),
-    ('admin_user4', 'admin_password', NULL, 'admin', 'admin4@example.com', '+6235551234567'),
-    ('alexsmith_admin', 'password321', NULL, 'admin', 'alexsmith@example.com', '+6285546667771'),
-    ('janedoe_admin', 'securepass123', NULL, 'admin', 'janedoe@example.com', '+6287774889990'),
-    ('johndoe_admin', 'admin123', NULL, 'admin', 'johndoe@example.com', '+6289876543210'),
-    ('customer1', 'customer_password1', NULL, 'customer', 'customer1@example.com', '+1987654321'),
-    ('customer2', 'customer_password2', NULL, 'customer', 'customer2@example.com', '+1765432987'),
-    ('john_doe', 'john_password', NULL, 'customer', 'john.doe@example.com', '+1654321987'),
-    ('jane_smith', 'jane_password', NULL, 'customer', 'jane.smith@example.com', '+1543219876'),
-    ('alice_jones', 'alice_password', NULL, 'customer', 'alice.jones@example.com', '+1432198765'),
-    ('bob_smith', 'bob_password', NULL, 'customer', 'bob.smith@example.com', '+1321987654'),
-    ('charlie_brown', 'charlie_password', NULL, 'customer', 'charlie.brown@example.com', '+1219876543'),
-    ('david_cole', 'david_password', NULL, 'customer', 'david.cole@example.com', '+1198765432'),
-    ('emily_davis', 'emily_password', NULL, 'customer', 'emily.davis@example.com', '+1098765432'),
-    ('frank_thomas', 'frank_password', NULL, 'customer', 'frank.thomas@example.com', '+1987654320'),
-    ('grace_miller', 'grace_password', NULL, 'customer', 'grace.miller@example.com', '+1876543210'),
-    ('henry_wilson', 'henry_password', NULL, 'customer', 'henry.wilson@example.com', '+1765432109'),
-    ('isabella_scott', 'isabella_password', NULL, 'customer', 'isabella.scott@example.com', '+1654321098'),
-    ('jacob_lee', 'jacob_password', NULL, 'customer', 'jacob.lee@example.com', '+1543210987'),
-    ('kate_harris', 'kate_password', NULL, 'customer', 'kate.harris@example.com', '+1432109876'),
-    ('leo_robinson', 'leo_password', NULL, 'customer', 'leo.robinson@example.com', '+1321098765'),
-    ('mia_nguyen', 'mia_password', NULL, 'customer', 'mia.nguyen@example.com', '+1210987654'),
-    ('nathan_king', 'nathan_password', NULL, 'customer', 'nathan.king@example.com', '+1198765430'),
-    ('olivia_clark', 'olivia_password', NULL, 'customer', 'olivia.clark@example.com', '+1098765430');
+    ('admin_user', 'scrypt:32768:8:1$w2OLutD9INjTziqK$76b9990a30efd81f589528faa17b5f38dae28339f8cbced36af1d6f7aae45ca80ceaf1cf144d87b5bfc348c2cc0005ca2376f8f21fc9217ec0d18828e556cb51', NULL, 'admin', 'admin1@example.com', '+1234567890'),
+    ('admin_user2','scrypt:32768:8:1$gWJuM1V1MDfds1nS$8f9a4e2075baaa1a727d82ec2833b2a6539547d5e4c3fda980ac6926bca37d0c750ce59726c91e274f8e81acaa65d10f133983470f172ac9858abcb636ebd82a', NULL, 'admin', 'admin2@example.com', '+6282345653879'),
+    ('admin_user3', 'scrypt:32768:8:1$w2OLutD9INjTziqK$76b9990a30efd81f589528faa17b5f38dae28339f8cbced36af1d6f7aae45ca80ceaf1cf144d87b5bfc348c2cc0005ca2376f8f21fc9217ec0d18828e556cb51', NULL, 'admin', 'admin3@example.com', '+6285551234567'),
+    ('admin_user4', 'scrypt:32768:8:1$w2OLutD9INjTziqK$76b9990a30efd81f589528faa17b5f38dae28339f8cbced36af1d6f7aae45ca80ceaf1cf144d87b5bfc348c2cc0005ca2376f8f21fc9217ec0d18828e556cb51', NULL, 'admin', 'admin4@example.com', '+6235551234567'),
+    ('alexsmith_admin', 'scrypt:32768:8:1$Yo1CMn4vm8ORpoRl$408e1b61df4b73354b96a4dadd685ed2e47a051515c61ab236826726ff6532cd2421bf342f8c5ee569c38023fda810d271c62c4f0b89cf9c039cd7578b85b0a0', NULL, 'admin', 'alexsmith@example.com', '+6285546667771'),
+    ('janedoe_admin', 'scrypt:32768:8:1$UyQ1Uo8MCSQ1aE10$51eea833b96a6023498c641f420f59b4b65e7c611d82f2789b7df2e5c88b29cdf9c62b9d9f3ee1e417708213beedaa62e17f7b55811ec39790014f9fe38bc60a', NULL, 'admin', 'janedoe@example.com', '+6287774889990'),
+    ('johndoe_admin', 'scrypt:32768:8:1$hTN9bhuyi2qunhs2$abc6d11c17a9f10c904d92f4ed16eb78206c438ffbc49859dd192d539fe3aaef128eb54adb57beda772972145f1e06d1b436305e892a0ccb065a56c13614cbe6', NULL, 'admin', 'johndoe@example.com', '+6289876543210'),
+    ('customer1', 'scrypt:32768:8:1$ThhCoTJ2vsM6yjoS$c05c68438f380dcf745cda1276cdff0f26531e98f50eb6b974bb6f199f8daabab78981832bec343e97b5ee801222c9ee6ae23780b9c7ccd6f72b0abe47de4f1c', NULL, 'customer', 'customer1@example.com', '+1987654321'),
+    ('customer2', 'scrypt:32768:8:1$n8Vlum4hrFqL7eL8$fdc6fbc3d76bb2e8af84cff5d69207373237d9292860613bbdf43825f569109ad914efb6ca5552686f25fe53dc80ec20b3e662993692395ca8d0eb8af160b637', NULL, 'customer', 'customer2@example.com', '+1765432987'),
+    ('john_doe', 'scrypt:32768:8:1$XSrmaNLGhT2jWG3s$cbbc77a0f880e70bbe7e97a61e2e8784dc2fdb4060f464fa76a0404e7ea9956af042d815e5713f29929254ccbc1827a9da8fd3e80ab243285649b3a665bec3b5', NULL, 'customer', 'john.doe@example.com', '+1654321987'),
+    ('jane_smith', 'scrypt:32768:8:1$fEEUaGtRH5uC4tla$454d2f4bbe889446e43a4f92c84d0d5da305f77c5eedc49d1f3b22b6f94ba9c24b3cc1f7c5214cc2e3110b26c1c3f69347ad0ab2503ca16f8ec82b9f544653b1', NULL, 'customer', 'jane.smith@example.com', '+1543219876'),
+    ('alice_jones', 'scrypt:32768:8:1$vwF1KdIQHvhjPzWk$49ae6984e663d9b5ba26845daea7c705a8ff41fb598dbc92ca7c68dd090d2937fc3b355b5d12f3b40dd464fb6db07948ed00c595a70989aae7051fae72e7eeed', NULL, 'customer', 'alice.jones@example.com', '+1432198765'),
+    ('bob_smith', 'scrypt:32768:8:1$YpeBkVCsvssmHpj0$144052cfa3101561fe8ff2edb2b8823cc52b7cdc59b011b066a0026465adedb028fd732380bb4c4db8be20f676f76faf3c8e4f78d32ed86a2271fd48c6d7e025', NULL, 'customer', 'bob.smith@example.com', '+1321987654'),
+    ('charlie_brown', 'scrypt:32768:8:1$t18I9QSyPf1IWbGI$af0c5f73680989d410661fc0152e8cbf49144b362ea65fb96d1e44603dd673886d3ffb63558c4f7d6522fff57147ab1865e56c80a45f8c0c9270acf1063c60d2', NULL, 'customer', 'charlie.brown@example.com', '+1219876543'),
+    ('david_cole', 'scrypt:32768:8:1$NRcMvXn7B9mODBv2$8e7483dcfc460131b10127784774911f2c49fe4750a45152fe6579f303c1e46d3a6443fcc1ec250b11236a37d9784add33f7d6615b9d8263b9fa3d42f8090776', NULL, 'customer', 'david.cole@example.com', '+1198765432'),
+    ('emily_davis', 'scrypt:32768:8:1$dzFDQRrgkoCsyQXV$8bf7bac649814e2cde8e9d7e797a1b65f9ad45ff9713e072552b2dcaaad2d00a8587c2cc804837545213f8468c907c0df9b126ad39aff575765756a2b4299390', NULL, 'customer', 'emily.davis@example.com', '+1098765432'),
+    ('frank_thomas', 'scrypt:32768:8:1$K9O2g9NSEJ7JULcv$ba5df0cebea6ae7dfaaf3471fe1bd227a3eb8adb18c4aaef56d17aeef3221a8f8f006097ac70cd1bb3df2753993c5cad66f352de631c7134a1fc14f2938a17ff', NULL, 'customer', 'frank.thomas@example.com', '+1987654320'),
+    ('grace_miller', 'scrypt:32768:8:1$0b1UazqHQPUmLcgl$e8fb872c3b26b3a8fbbbfd03e0a14bce052d669bd0c0f5c9f27d874bb49aacd0a723af7e21c0d3c62297be15f12111f53751d92841dc78f55e0cf87345d38f10', NULL, 'customer', 'grace.miller@example.com', '+1876543210'),
+    ('henry_wilson', 'scrypt:32768:8:1$gvS2uqvlUAr8qsc8$489640528dff128ac8a5f76e1670adbd2a114858a846069fa4aa1ea73e99a542ac49d4754828e4a01f33db2fc00c40807beede7fd0153a6fb5728133cfe573f4', NULL, 'customer', 'henry.wilson@example.com', '+1765432109'),
+    ('isabella_scott', 'scrypt:32768:8:1$VioalJOHbfhItz9I$5df15d7a94e39bb9c8b6fca58b4e1f9314cd26ef66ee857acb631c5949468c7ce68aa1928dd0142b30ebee3872dc8c256429736cbe9f53694cc8a45067b4fd09', NULL, 'customer', 'isabella.scott@example.com', '+1654321098'),
+    ('jacob_lee', 'scrypt:32768:8:1$Dmy6CGd7KyTkVaL5$fd89b8ace78ea330f77e8313e143748174dc33649e56662e0fa6b26335ca8d1cf4937a3ed84edbfee904d51ecc0011124bfcc26e557091d4a74ed1ce15fc3af6', NULL, 'customer', 'jacob.lee@example.com', '+1543210987'),
+    ('kate_harris', 'scrypt:32768:8:1$zzzxSSNhcFhdgBbw$3c56137ff63d444ec055615594ab174ec15fe8e11158e60c8cd2c7748f1432e993456d417afff2cd36c4029d33b34fbf339b90f50090b00704d8a1c646eee8b8', NULL, 'customer', 'kate.harris@example.com', '+1432109876'),
+    ('leo_robinson', 'scrypt:32768:8:1$9pvsBgmUWygPeyRY$2a1fbb6642c4b63df530846f701fd06403b8643f2580d8f9476b61e38da9adb30bf9e257e7c6b4459fb5e04f4817a4c210c4d4ca85a1d1cf6e3808145ab4fc6b', NULL, 'customer', 'leo.robinson@example.com', '+1321098765'),
+    ('mia_nguyen', 'scrypt:32768:8:1$47CVqz0ZlsiODSzr$942d3f5fc7e18023567197cc1069c1b36ad8ad9d59add38fcb28ed64a589eb95b9dcb72bc529cd5a884af6ac8cb25ed5a040366cdba1d8856e8b37ef30c8958f', NULL, 'customer', 'mia.nguyen@example.com', '+1210987654'),
+    ('nathan_king', 'scrypt:32768:8:1$joEZoSGzw3BsY8Y6$3a0074033fe9becbe13c2949187f00488a8d6cfe8fd66e2229c9166b5fa0b0e323bfe9b6cb05a0817bc4bc2517785538470c803a011f4428433d0c9d57758060', NULL, 'customer', 'nathan.king@example.com', '+1198765430'),
+    ('olivia_clark', 'scrypt:32768:8:1$icjd7ADnTq3GspjA$03166b96f4bc013ddf5128434894be204db668509ec2fd3e18126921c03d68d13451e8290be0f35fb0d85f0e493eb0da76af91cf4f542a5a64e6a96ebda36c2e', NULL, 'customer', 'olivia.clark@example.com', '+1098765430');
 
 -- Insert dummy data for field types
 INSERT INTO field_types (name) VALUES
@@ -125,3 +125,12 @@ INSERT INTO bookings (user_id, field_id, date, time, payment_method_id) VALUES
     (10, 10, '2021-12-01', '18:00:00', 2),
     (11, 11, '2021-12-01', '19:00:00', 3),
     (12, 12, '2021-12-01', '20:00:00', 4);
+
+-- Insert dummy data for payments
+INSERT INTO payments (booking_id, amount, payment_date) VALUES
+    (1, 30000.00, '2021-12-01 09:15:00'),
+    (2, 55000.00, '2021-12-01 10:20:00'),
+    (3, 40000.00, '2021-12-01 11:10:00'),
+    (4, 30000.00, '2021-12-01 12:05:00'),
+    (5, 55000.00, '2021-12-01 13:30:00'),
+    (6, 60000.00, '2021-12-01 14:15:00');

@@ -17,6 +17,22 @@ import DashboardMyBookings from './components/Fragments/Dashboard/dashboard_my_b
 import LoginPage from './pages/login_page';
 import RegisterPage from './pages/register_page';
 import ConfirmPaymentPage from './pages/confirm_payment_page';
+import axios from 'axios';
+
+// Configure global Axios Request Interceptor
+axios.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
 
 const router = createBrowserRouter([
   {

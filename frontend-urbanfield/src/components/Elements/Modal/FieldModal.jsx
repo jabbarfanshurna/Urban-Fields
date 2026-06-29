@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import { getFacilities } from '../../../services/db/facility.service';
 import { getFieldFacilities, updateFieldFacilities } from '../../../services/db/field.service';
 
@@ -126,18 +127,8 @@ const FieldModal = ({ showModal, toggleModal, field, onSubmit }) => {
         if (!field || !field.id) return;
 
         try {
-            const response = await fetch(`http://127.0.0.1:5000/fields/${field.id}`, {
-                method: 'DELETE',
-            });
-
-            if (!response.ok) {
-                throw new Error('Failed to delete field data');
-            }
-
-            const result = await response.json();
-            console.log('Field deleted successfully:', result);
-
-            // Close the modal
+            const response = await axios.delete(`http://127.0.0.1:5000/fields/${field.id}`);
+            console.log('Field deleted successfully:', response.data);
             toggleModal();
         } catch (error) {
             console.error('Error deleting field:', error);

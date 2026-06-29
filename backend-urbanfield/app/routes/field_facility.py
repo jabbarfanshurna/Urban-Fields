@@ -1,19 +1,30 @@
 from flask import request, jsonify
+from flask_jwt_extended import jwt_required
 from app import app, db
 from app.models import Field, Facility, FieldFacility
+from app.routes.users import admin_required
 
 @app.route('/field_facilities', methods=['POST', 'GET'])
 def manage_field_facilities():
-    if request.method == 'POST':
+    if request.method == 'GET':
+        field_facilities = FieldFacility.query.all()
+        field_facilities_list = [{"id": ff.id, "field_id": ff.field_id, "facility_id": ff.facility_id} for ff in field_facilities]
+        return jsonify(field_facilities_list), 200
+
+    @jwt_required()
+    @admin_required()
+    def handle_post():
         data = request.json
+        if not data:
+            return jsonify({"error": "Missing JSON body"}), 400
         field_id = data.get('field_id')
         facility_id = data.get('facility_id')
 
-        field = Field.query.get(field_id)
+        field = db.session.get(Field, field_id)
         if not field:
             return jsonify({"error": f"Field with ID {field_id} not found"}), 404
 
-        facility = Facility.query.get(facility_id)
+        facility = db.session.get(Facility, facility_id)
         if not facility:
             return jsonify({"error": f"Facility with ID {facility_id} not found"}), 404
 
@@ -26,8 +37,6 @@ def manage_field_facilities():
         db.session.add(new_field_facility)
         db.session.commit()
         return jsonify({"message": "Field Facility association created successfully"}), 201
-    
-    elif request.method == 'GET':
-        field_facilities = FieldFacility.query.all()
-        field_facilities_list = [{"id": ff.id, "field_id": ff.field_id, "facility_id": ff.facility_id} for ff in field_facilities]
-        return jsonify(field_facilities_list), 200
+
+    return handle_post()
+

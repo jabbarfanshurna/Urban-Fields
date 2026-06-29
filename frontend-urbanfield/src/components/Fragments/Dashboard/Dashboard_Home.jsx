@@ -1,5 +1,6 @@
 import { jwtDecode } from "jwt-decode";
 import { useEffect, useState } from "react";
+import axios from 'axios';
 
 const DashboardHome = () => {
   const [user, setUser] = useState({});
@@ -26,12 +27,8 @@ const DashboardHome = () => {
 
   const fetchUser = async (userId) => {
     try {
-      const response = await fetch(`http://127.0.0.1:5000/users/${userId}`);
-      if (!response.ok) {
-        throw new Error('Failed to fetch user data');
-      }
-      const userData = await response.json();
-      setUser(userData);
+      const response = await axios.get(`http://127.0.0.1:5000/users/${userId}`);
+      setUser(response.data);
     } catch (error) {
       console.error('Error fetching user data:', error);
     }

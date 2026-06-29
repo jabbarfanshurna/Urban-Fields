@@ -1,10 +1,13 @@
 from flask import Flask, request, jsonify, send_from_directory
+from flask_jwt_extended import jwt_required
 from app import app, db
 from app.models import Field, FieldType, Facility, FieldFacility, FieldReview
 from werkzeug.utils import secure_filename
 import os
 from os.path import join, dirname, realpath
 import uuid
+from app.routes.users import admin_required
+import datetime
 
 UPLOAD_FOLDER = join(dirname(realpath(__file__)), 'uploads/fields/')
 if not os.path.exists(UPLOAD_FOLDER):
@@ -23,64 +26,24 @@ def uploaded_file(filename):
 @app.route('/fields', methods=['POST', 'GET'])
 @app.route('/fields/<int:field_id>', methods=['GET', 'PUT', 'DELETE'])
 def manage_fields(field_id=None):
-    if request.method == 'POST':
-        data = request.form
-        files = request.files
-
-        new_field = Field(
-            name=data['name'],
-            type_id=data['type_id'],
-            city=data['city'],
-            address=data['address'],
-            street_address=data.get('street_address'),
-            price_per_hour=data['price_per_hour'],
-            opening_time=data.get('opening_time'),
-            closing_time=data.get('closing_time')
-        )
-
-        # Handle image uploads with unique filenames
-        if 'image_url' in files and allowed_file(files['image_url'].filename):
-            filename = secure_filename(files['image_url'].filename)
-            unique_filename = f"{uuid.uuid4()}_{filename}"
-            filepath = os.path.join(app.config['UPLOAD_FOLDER'], unique_filename)
-            files['image_url'].save(filepath)
-            new_field.image_url = f'uploads/fields/{unique_filename}'
-
-        if 'image_url2' in files and allowed_file(files['image_url2'].filename):
-            filename = secure_filename(files['image_url2'].filename)
-            unique_filename = f"{uuid.uuid4()}_{filename}"
-            filepath = os.path.join(app.config['UPLOAD_FOLDER'], unique_filename)
-            files['image_url2'].save(filepath)
-            new_field.image_url2 = f'uploads/fields/{unique_filename}'
-
-        if 'image_url3' in files and allowed_file(files['image_url3'].filename):
-            filename = secure_filename(files['image_url3'].filename)
-            unique_filename = f"{uuid.uuid4()}_{filename}"
-            filepath = os.path.join(app.config['UPLOAD_FOLDER'], unique_filename)
-            files['image_url3'].save(filepath)
-            new_field.image_url3 = f'uploads/fields/{unique_filename}'
-
-        db.session.add(new_field)
-        db.session.commit()
-        return jsonify({"message": "Field created successfully", "id": new_field.id}), 201
-
-    elif request.method == 'GET':
+    if request.method == 'GET':
         if field_id is not None:
-            field = Field.query.get(field_id)
+            field = db.session.get(Field, field_id)
             if field:
-                venue = FieldType.query.get(field.type_id)
+                venue = db.session.get(FieldType, field.type_id)
+                venue_name = venue.name if venue else "Unknown"
                 field_data = {
                     "id": field.id,
                     "name": field.name,
                     "type_id": field.type_id,
-                    "venue": venue.name,
+                    "venue": venue_name,
                     "city": field.city,
                     "address": field.address,
                     "street_address": field.street_address,
                     "image_url": field.image_url,
                     "image_url2": field.image_url2,
                     "image_url3": field.image_url3,
-                    "price_per_hour": field.price_per_hour,
+                    "price_per_hour": float(field.price_per_hour),
                     "opening_time": field.opening_time.strftime('%H:%M') if field.opening_time else None,
                     "closing_time": field.closing_time.strftime('%H:%M') if field.closing_time else None,
                 }
@@ -92,38 +55,108 @@ def manage_fields(field_id=None):
             fields = Field.query.all()
             fields_list = []
             for field in fields:
-                venue = FieldType.query.get(field.type_id)
+                venue = db.session.get(FieldType, field.type_id)
+                venue_name = venue.name if venue else "Unknown"
                 field_data = {
                     "id": field.id,
                     "name": field.name,
                     "type_id": field.type_id,
-                    "venue": venue.name,
+                    "venue": venue_name,
                     "city": field.city,
                     "address": field.address,
                     "street_address": field.street_address,
                     "image_url": field.image_url,
                     "image_url2": field.image_url2,
                     "image_url3": field.image_url3,
-                    "price_per_hour": field.price_per_hour,
+                    "price_per_hour": float(field.price_per_hour),
                     "opening_time": field.opening_time.strftime('%H:%M') if field.opening_time else None,
                     "closing_time": field.closing_time.strftime('%H:%M') if field.closing_time else None,
                 }
                 fields_list.append(field_data)
             return jsonify(fields_list), 200
 
-    elif request.method == 'PUT':
-        data = request.form
-        files = request.files
-        field = Field.query.get(field_id)
-        if field:
+    # Write operations require admin privilege
+    @jwt_required()
+    @admin_required()
+    def handle_write():
+        if request.method == 'POST':
+            data = request.form
+            files = request.files
+
+            if not data or not data.get('name') or not data.get('type_id') or not data.get('city') or not data.get('address') or not data.get('price_per_hour'):
+                return jsonify({"error": "Missing required field data"}), 400
+
+            opening = None
+            closing = None
+            try:
+                if data.get('opening_time'):
+                    opening = datetime.datetime.strptime(data['opening_time'], '%H:%M').time()
+                if data.get('closing_time'):
+                    closing = datetime.datetime.strptime(data['closing_time'], '%H:%M').time()
+            except ValueError:
+                return jsonify({"error": "Invalid time format. Expected HH:MM"}), 400
+
+            new_field = Field(
+                name=data['name'],
+                type_id=data['type_id'],
+                city=data['city'],
+                address=data['address'],
+                street_address=data.get('street_address'),
+                price_per_hour=data['price_per_hour'],
+                opening_time=opening,
+                closing_time=closing
+            )
+
+            # Handle image uploads with unique filenames
+            if 'image_url' in files and allowed_file(files['image_url'].filename):
+                filename = secure_filename(files['image_url'].filename)
+                unique_filename = f"{uuid.uuid4()}_{filename}"
+                filepath = os.path.join(app.config['UPLOAD_FOLDER'], unique_filename)
+                files['image_url'].save(filepath)
+                new_field.image_url = f'uploads/fields/{unique_filename}'
+            else:
+                # Set dummy or default if empty, but field is nullable=False
+                new_field.image_url = 'uploads/fields/default.png'
+
+            if 'image_url2' in files and allowed_file(files['image_url2'].filename):
+                filename = secure_filename(files['image_url2'].filename)
+                unique_filename = f"{uuid.uuid4()}_{filename}"
+                filepath = os.path.join(app.config['UPLOAD_FOLDER'], unique_filename)
+                files['image_url2'].save(filepath)
+                new_field.image_url2 = f'uploads/fields/{unique_filename}'
+
+            if 'image_url3' in files and allowed_file(files['image_url3'].filename):
+                filename = secure_filename(files['image_url3'].filename)
+                unique_filename = f"{uuid.uuid4()}_{filename}"
+                filepath = os.path.join(app.config['UPLOAD_FOLDER'], unique_filename)
+                files['image_url3'].save(filepath)
+                new_field.image_url3 = f'uploads/fields/{unique_filename}'
+
+            db.session.add(new_field)
+            db.session.commit()
+            return jsonify({"message": "Field created successfully", "id": new_field.id}), 201
+
+        elif request.method == 'PUT':
+            data = request.form
+            files = request.files
+            field = db.session.get(Field, field_id)
+            if not field:
+                return jsonify({"error": "Field not found"}), 404
+
             field.name = data.get('name', field.name)
             field.type_id = data.get('type_id', field.type_id)
             field.city = data.get('city', field.city)
             field.address = data.get('address', field.address)
             field.street_address = data.get('street_address', field.street_address)
             field.price_per_hour = data.get('price_per_hour', field.price_per_hour)
-            field.opening_time = data.get('opening_time', field.opening_time)
-            field.closing_time = data.get('closing_time', field.closing_time)
+            
+            try:
+                if 'opening_time' in data:
+                    field.opening_time = datetime.datetime.strptime(data['opening_time'], '%H:%M').time()
+                if 'closing_time' in data:
+                    field.closing_time = datetime.datetime.strptime(data['closing_time'], '%H:%M').time()
+            except ValueError:
+                return jsonify({"error": "Invalid time format. Expected HH:MM"}), 400
 
             # Handle image uploads with unique filenames
             if 'image_url' in files and allowed_file(files['image_url'].filename):
@@ -149,21 +182,21 @@ def manage_fields(field_id=None):
 
             db.session.commit()
             return jsonify({"message": "Field updated successfully"}), 200
-        else:
-            return jsonify({"error": "Field not found"}), 404
 
-    elif request.method == 'DELETE':
-        field = Field.query.get(field_id)
-        if field:
-            db.session.delete(field)
-            db.session.commit()
-            return jsonify({"message": "Field deleted successfully"}), 200
-        else:
-            return jsonify({"error": "Field not found"}), 404
+        elif request.method == 'DELETE':
+            field = db.session.get(Field, field_id)
+            if field:
+                db.session.delete(field)
+                db.session.commit()
+                return jsonify({"message": "Field deleted successfully"}), 200
+            else:
+                return jsonify({"error": "Field not found"}), 404
+
+    return handle_write()
 
 @app.route('/fields/<int:field_id>/facilities', methods=['GET', 'PUT'])
 def manage_field_facilities_for_field(field_id):
-    field = Field.query.get(field_id)
+    field = db.session.get(Field, field_id)
     if not field:
         return jsonify({"error": "Field not found"}), 404
 
@@ -175,7 +208,9 @@ def manage_field_facilities_for_field(field_id):
         facilities_list = [{"id": facility.id, "name": facility.name, "icon": facility.icon} for facility in facilities]
         return jsonify(facilities_list), 200
 
-    elif request.method == 'PUT':
+    @jwt_required()
+    @admin_required()
+    def handle_put():
         data = request.json
         facility_ids = data.get('facility_ids', [])
 
@@ -183,12 +218,14 @@ def manage_field_facilities_for_field(field_id):
         FieldFacility.query.filter_by(field_id=field_id).delete()
 
         for facility_id in facility_ids:
-            facility = Facility.query.get(facility_id)
+            facility = db.session.get(Facility, facility_id)
             if facility:
                 db.session.add(FieldFacility(field_id=field_id, facility_id=facility_id))
 
         db.session.commit()
         return jsonify({"message": "Field facilities updated successfully"}), 200
+
+    return handle_put()
 
 @app.route('/fields/<int:field_id>/reviews', methods=['GET'])
 def get_field_reviews(field_id):
@@ -199,4 +236,4 @@ def get_field_reviews(field_id):
         "rating": review.rating,
         "review": review.review
     } for review in reviews]
-    return jsonify(reviews_list), 200
+    return jsonify(reviews_list), 200

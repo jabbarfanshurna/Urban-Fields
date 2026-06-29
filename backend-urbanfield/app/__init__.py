@@ -28,4 +28,4 @@ swagger_yml_path = os.path.join(os.path.dirname(__file__), 'swagger.yml')
 swagger = Swagger(app, template_file=swagger_yml_path)
 
 # Import routes (pastikan di bawah inisialisasi app, db, jwt)
-from app.routes import bookings, facilities, field_facility, field_review, field_types, fields, payments, users
+from app.routes import users, bookings, facilities, field_facility, field_review, field_types, fields, payments

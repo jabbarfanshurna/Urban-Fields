@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { jwtDecode } from "jwt-decode";
 import ReviewCard from "../../Elements/Card/ReviewCard";
+import axios from "axios";
 
 const FieldReviews = ({ fieldId }) => {
     const [reviews, setReviews] = useState([]);
@@ -14,12 +15,8 @@ const FieldReviews = ({ fieldId }) => {
 
     const fetchReviews = async () => {
         try {
-            const response = await fetch(`http://127.0.0.1:5000/fields/${fieldId}/reviews`);
-            if (!response.ok) {
-                throw new Error("Failed to fetch reviews");
-            }
-            const reviewsData = await response.json();
-            setReviews(reviewsData);
+            const response = await axios.get(`http://127.0.0.1:5000/fields/${fieldId}/reviews`);
+            setReviews(response.data);
         } catch (error) {
             console.error("Error fetching reviews:", error);
         }
@@ -41,24 +38,12 @@ const FieldReviews = ({ fieldId }) => {
         }
 
         try {
-            const decodedToken = jwtDecode(token);
-            const userId = decodedToken.sub;
-
             setSubmitting(true);
-            const response = await fetch('http://127.0.0.1:5000/field_reviews', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    field_id: fieldId,
-                    user_id: userId,
-                    rating: Number(rating),
-                    review: reviewText,
-                }),
+            await axios.post('http://127.0.0.1:5000/field_reviews', {
+                field_id: fieldId,
+                rating: Number(rating),
+                review: reviewText,
             });
-
-            if (!response.ok) {
-                throw new Error('Failed to submit review');
-            }
 
             setReviewText('');
             setRating(10);
