@@ -29,7 +29,7 @@ const PaymentPage = () => {
         } else {
             try {
                 const decodedToken = jwtDecode(token);
-                const userId = decodedToken.sub;
+                const userId = decodedToken.sub && typeof decodedToken.sub === 'object' ? decodedToken.sub.id : decodedToken.sub;
 
                 fetchUser(userId);
             } catch (error) {

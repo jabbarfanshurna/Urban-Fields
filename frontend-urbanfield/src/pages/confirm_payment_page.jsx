@@ -18,7 +18,7 @@ const ConfirmPaymentPage = () => {
 
     const token = localStorage.getItem('token');
     const decodedToken = jwtDecode(token);
-    const userId = decodedToken.sub;
+    const userId = decodedToken.sub && typeof decodedToken.sub === 'object' ? decodedToken.sub.id : decodedToken.sub;
 
     useEffect(() => {
         getFieldById(id).then((data) => {

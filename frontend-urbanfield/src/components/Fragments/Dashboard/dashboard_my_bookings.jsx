@@ -15,8 +15,9 @@ const DashboardMyBookings = () => {
 
         try {
             const decodedToken = jwtDecode(token);
-            setUserId(decodedToken.sub);
-            loadBookings(decodedToken.sub);
+            const extractedUserId = decodedToken.sub && typeof decodedToken.sub === 'object' ? decodedToken.sub.id : decodedToken.sub;
+            setUserId(extractedUserId);
+            loadBookings(extractedUserId);
         } catch (error) {
             console.error('Error decoding token:', error);
             window.location.href = '/login';
