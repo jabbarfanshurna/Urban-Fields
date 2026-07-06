@@ -5,7 +5,7 @@ USE urban_fields;
 CREATE TABLE users (
     id INT PRIMARY KEY AUTO_INCREMENT,
     username VARCHAR(80) NOT NULL UNIQUE,
-    password VARCHAR(120) NOT NULL,
+    password VARCHAR(255) NOT NULL,
     email VARCHAR(100) NOT NULL UNIQUE,
     phone_number VARCHAR(20) NOT NULL UNIQUE,
     user_document VARCHAR(255),
@@ -23,7 +23,7 @@ CREATE TABLE fields (
     type_id INT NOT NULL,
     city VARCHAR(100) NOT NULL,
     address VARCHAR(100) NOT NULL,
-    street_address VARCHAR(100),
+    street_address VARCHAR(255),
     image_url VARCHAR(255) NOT NULL,
     image_url2 VARCHAR(255) NOT NULL,
     image_url3 VARCHAR(255) NOT NULL,

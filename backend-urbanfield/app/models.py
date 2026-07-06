@@ -5,7 +5,7 @@ class User(db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
-    password = db.Column(db.String(120), nullable=False)
+    password = db.Column(db.String(255), nullable=False)
     email = db.Column(db.String(100), unique=True, nullable=False)
     phone_number = db.Column(db.String(20), unique=True, nullable=False)
     user_document = db.Column(db.String(255))
@@ -23,7 +23,7 @@ class Field(db.Model):
     type_id = db.Column(db.Integer, db.ForeignKey('field_types.id'), nullable=False)
     city = db.Column(db.String(100), nullable=False)
     address = db.Column(db.String(100), nullable=False)
-    street_address = db.Column(db.String(100))
+    street_address = db.Column(db.String(255))
     image_url = db.Column(db.String(255), nullable=False)
     image_url2 = db.Column(db.String(255))
     image_url3 = db.Column(db.String(255))
