@@ -59,12 +59,18 @@ def create_user():
     db.session.commit()
     return jsonify({"message": "User created successfully"}), 201
 
-# Get all users (Admin only)
+# Get all users (Admin gets all, Customer gets only admins)
 @app.route('/users', methods=['GET'])
 @jwt_required()
-@admin_required()
 def get_all_users():
-    users = User.query.all()
+    current_identity = get_jwt_identity()
+    current_role = current_identity.get('role') if isinstance(current_identity, dict) else None
+
+    if current_role == 'admin':
+        users = User.query.all()
+    else:
+        users = User.query.filter_by(role='admin').all()
+
     users_list = [
         {
             "id": user.id,
