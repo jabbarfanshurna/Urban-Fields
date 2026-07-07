@@ -86,11 +86,25 @@ const FieldsPage = () => {
                 </div>
             </div>
             <div className="mt-20 w-full grid grid-cols-3 gap-y-10 px-40 justify-items-center select-none">
-                {filteredFields.slice(0, 12).map(field => (
-                    <a key={field.id} href={`/fields/${field.id}`} className="mx-5">
-                        <FieldCard key={field.id} img={field.image_url} venue={field.venue} name={field.name} location={field.city} price={field.price_per_hour} />
-                    </a>
-                ))}
+                {filteredFields.length === 0 ? (
+                    <div className="col-span-3 flex flex-col items-center justify-center py-16 text-center font-Poppins">
+                        <div className="w-20 h-20 bg-gray-100 flex items-center justify-center rounded-full mb-4">
+                            <svg className="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
+                        <h3 className="text-xl font-bold text-gray-700">Venue Tidak Ditemukan</h3>
+                        <p className="text-gray-400 mt-2 text-sm max-w-sm leading-relaxed">
+                            Maaf, kami tidak menemukan lapangan olahraga yang sesuai dengan kriteria pencarian Anda. Silakan coba cari dengan kata kunci lain.
+                        </p>
+                    </div>
+                ) : (
+                    filteredFields.slice(0, 12).map(field => (
+                        <a key={field.id} href={`/fields/${field.id}`} className="mx-5">
+                            <FieldCard key={field.id} img={field.image_url} venue={field.venue} name={field.name} location={field.city} price={field.price_per_hour} />
+                        </a>
+                    ))
+                )}
             </div>
             
             <LandingPageAbout />
