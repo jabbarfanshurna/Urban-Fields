@@ -2,12 +2,15 @@ import React, { useState, useEffect } from "react";
 import { jwtDecode } from "jwt-decode";
 import ReviewCard from "../../Elements/Card/ReviewCard";
 import axios from "axios";
+import { useModal } from "../../../context/ModalContext";
+
 
 const FieldReviews = ({ fieldId }) => {
     const [reviews, setReviews] = useState([]);
     const [rating, setRating] = useState(10);
     const [reviewText, setReviewText] = useState('');
     const [submitting, setSubmitting] = useState(false);
+    const { showAlert } = useModal();
 
     useEffect(() => {
         fetchReviews();
@@ -27,13 +30,13 @@ const FieldReviews = ({ fieldId }) => {
 
         const token = localStorage.getItem('token');
         if (!token) {
-            alert('Silakan login terlebih dahulu untuk memberi review.');
+            await showAlert('Silakan login terlebih dahulu untuk memberi review.', 'Butuh Login');
             window.location.href = '/login';
             return;
         }
 
         if (!reviewText.trim()) {
-            alert('Tulis review Anda terlebih dahulu.');
+            await showAlert('Tulis review Anda terlebih dahulu.', 'Ulasan Kosong');
             return;
         }
 
@@ -50,7 +53,7 @@ const FieldReviews = ({ fieldId }) => {
             fetchReviews();
         } catch (error) {
             console.error('Error submitting review:', error);
-            alert('Gagal mengirim review. Silakan coba lagi.');
+            await showAlert('Gagal mengirim review. Silakan coba lagi.', 'Error');
         } finally {
             setSubmitting(false);
         }

@@ -1,10 +1,13 @@
 import { useState, useEffect } from 'react';
 import { jwtDecode } from 'jwt-decode';
 import { getMyBookings, deleteBooking } from '../../../services/db/booking.service';
+import { useModal } from '../../../context/ModalContext';
+
 
 const DashboardMyBookings = () => {
     const [bookings, setBookings] = useState([]);
     const [userId, setUserId] = useState(null);
+    const { showAlert, showConfirm } = useModal();
 
     useEffect(() => {
         const token = localStorage.getItem('token');
@@ -31,7 +34,7 @@ const DashboardMyBookings = () => {
     };
 
     const handleCancel = async (bookingId) => {
-        const confirmed = window.confirm('Apakah Anda yakin ingin membatalkan reservasi ini?');
+        const confirmed = await showConfirm('Apakah Anda yakin ingin membatalkan reservasi ini?', 'Batalkan Reservasi');
         if (!confirmed) return;
 
         try {
@@ -39,7 +42,7 @@ const DashboardMyBookings = () => {
             loadBookings(userId);
         } catch (error) {
             const message = error.response?.data?.error || 'Gagal membatalkan reservasi. Silakan coba lagi.';
-            alert(message);
+            await showAlert(message, 'Gagal');
         }
     };
 

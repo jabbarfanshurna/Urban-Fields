@@ -11,6 +11,8 @@ import PaymentChoose from '../components/Fragments/Payment_Page/payment_choose';
 import { getFieldById } from '../services/db/field.service';
 import { jwtDecode } from 'jwt-decode';
 import axios from 'axios';
+import { useModal } from '../context/ModalContext';
+
 
 const PaymentPage = () => {
     const location = useLocation();
@@ -53,6 +55,7 @@ const PaymentPage = () => {
     const [paymentMethod, setPaymentMethod] = useState(null);
     const [paymentSelected, setPaymentSelected] = useState(false); // State untuk melacak apakah metode pembayaran sudah dipilih
     const navigate = useNavigate();
+    const { showAlert } = useModal();
 
     useEffect(() => {
         getFieldById(id).then((data) => {
@@ -60,12 +63,12 @@ const PaymentPage = () => {
         });
     }, [id]);
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
         if (paymentMethod) { // Pastikan paymentMethod sudah dipilih
             navigate(`/confirm_payment/${id}?date=${selectedDate}&time=${selectedTime}&price=${price}&paymentMethod=${paymentMethod}`);
         } else {
-            alert("Pilih metode pembayaran terlebih dahulu!");
+            await showAlert("Pilih metode pembayaran terlebih dahulu!", "Metode Pembayaran");
         }
     };
 

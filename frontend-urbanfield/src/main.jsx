@@ -19,6 +19,8 @@ import RegisterPage from './pages/register_page';
 import ConfirmPaymentPage from './pages/confirm_payment_page';
 import axios from 'axios';
 import { HelmetProvider } from 'react-helmet-async';
+import { ModalProvider } from './context/ModalContext';
+
 
 // Configure global Axios Request Interceptor
 axios.interceptors.request.use(
@@ -118,7 +120,9 @@ const router = createBrowserRouter([
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <HelmetProvider>
-      <RouterProvider router={router} />
+      <ModalProvider>
+        <RouterProvider router={router} />
+      </ModalProvider>
     </HelmetProvider>
   </React.StrictMode>,
 );

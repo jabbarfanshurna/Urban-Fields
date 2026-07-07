@@ -2,8 +2,11 @@ import React, { useState, useEffect } from 'react';
 import DateCard from "../../Elements/Card/DateCard";
 import TimeCard from "../../Elements/Card/TimeCard";
 import { getBookedSlots } from "../../../services/db/booking.service";
+import { useModal } from '../../../context/ModalContext';
+
 
 const FieldDateBooks = ({ fieldId, price }) => {
+    const { showAlert } = useModal();
     const formattedPrice = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(price);
     const date = new Date();
     
@@ -53,11 +56,11 @@ const FieldDateBooks = ({ fieldId, price }) => {
         });
     }, [fieldId, selectedDate]);
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
 
         if (!selectedTime) {
-            alert('Silakan pilih jadwal waktu terlebih dahulu.');
+            await showAlert('Silakan pilih jadwal waktu terlebih dahulu.', 'Jadwal Kosong');
             return;
         }
 

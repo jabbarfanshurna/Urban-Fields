@@ -25,7 +25,7 @@ const DashboardAdmins = () => {
             </div>
             <div className="grid grid-cols-4 gap-8 mt-4 font-Nunito_Sans">
                 {admins.map(admin => (
-                    <DashboardAdminCard key={admin.id} id={admin.id} username={admin.username} email={admin.email} />
+                    <DashboardAdminCard key={admin.id} id={admin.id} username={admin.username} email={admin.email} phone_number={admin.phone_number} />
                 ))}
             </div>
         </div>

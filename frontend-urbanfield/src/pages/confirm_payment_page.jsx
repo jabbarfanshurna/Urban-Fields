@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { getFieldById } from '../services/db/field.service';
 import { jwtDecode } from 'jwt-decode';
+import { useModal } from '../context/ModalContext';
+
 
 const ConfirmPaymentPage = () => {
     const location = useLocation();
@@ -15,6 +17,7 @@ const ConfirmPaymentPage = () => {
 
     const { id } = useParams();
     const [field, setField] = useState({});
+    const { showAlert } = useModal();
 
     const token = localStorage.getItem('token');
     const decodedToken = jwtDecode(token);
@@ -36,18 +39,18 @@ const ConfirmPaymentPage = () => {
         };
 
         axios.post('http://127.0.0.1:5000/bookings', data)
-            .then(response => {
+            .then(async response => {
                 console.log(response.data.message);
-                alert('Pembayaran berhasil dilakukan.');
+                await showAlert('Pembayaran berhasil dilakukan.', 'Sukses');
                 window.location.href = '/fields';
             })
-            .catch(error => {
+            .catch(async error => {
                 console.error('Error during booking:', error);
                 if (error.response && error.response.status === 409) {
-                    alert(error.response.data.error || 'Slot waktu ini sudah dibooking, silakan pilih jadwal lain.');
+                    await showAlert(error.response.data.error || 'Slot waktu ini sudah dibooking, silakan pilih jadwal lain.', 'Jadwal Bentrok');
                     window.location.href = `/fields/${id}`;
                 } else {
-                    alert('Terjadi kesalahan saat melakukan pembayaran.');
+                    await showAlert('Terjadi kesalahan saat melakukan pembayaran.', 'Error');
                 }
             });
 

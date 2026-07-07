@@ -2,10 +2,13 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { getUsers } from '../../../services/db/user.service';
 import { useOutletContext } from 'react-router-dom';
+import { useModal } from '../../../context/ModalContext';
+
 
 const DashboardUser = () => {
     const [users, setUsers] = useState([]);
     const { role } = useOutletContext();
+    const { showConfirm } = useModal();
 
     useEffect(() => {
         if (role != 'admin') {
@@ -18,7 +21,8 @@ const DashboardUser = () => {
     }, []);
 
     const handleDelete = async (userId, username) => {
-        if (window.confirm(`Apakah anda yakin ingin menghapus user ${username}?`)) {
+        const confirmed = await showConfirm(`Apakah anda yakin ingin menghapus user ${username}?`, 'Hapus User');
+        if (confirmed) {
             try {
                 await axios.delete(`http://127.0.0.1:5000/users/${userId}`);
                 setUsers(users.filter(user => user.id !== userId));
