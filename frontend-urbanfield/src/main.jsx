@@ -34,6 +34,21 @@ axios.interceptors.request.use(
   }
 );
 
+// Configure global Axios Response Interceptor to handle expired or invalid JWT tokens
+axios.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  (error) => {
+    if (error.response && (error.response.status === 401 || error.response.status === 422)) {
+      console.warn("Session expired or invalid token. Redirecting to login...");
+      localStorage.removeItem('token');
+      window.location.href = '/login';
+    }
+    return Promise.reject(error);
+  }
+);
+
 
 const router = createBrowserRouter([
   {
